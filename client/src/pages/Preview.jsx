@@ -1,9 +1,62 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { dummyResumeData } from "../assets/assets";
+import { ArrowLeftIcon, Loader } from "lucide-react";
+import ResumePreview from "../Components/ResumePreview";
 
 const Preview = () => {
-  return (
-    <div>Preview</div>
-  )
-}
+  const { resumeId } = useParams();
+  const [resumeData, setResumeData] = useState(null);
+  const [isLoading, setLoading] = useState(true);
 
-export default Preview
+  useEffect(() => {
+    const loadResume = async () => {
+      setLoading(true);
+      // Simulate async data fetching (for demo, since dummy data is local)
+      const foundResume = dummyResumeData.find((resume) => resume._id === resumeId);
+      setResumeData(foundResume || null);
+      setLoading(false);
+    };
+
+    loadResume();
+  }, [resumeId]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <Loader className="size-8 text-blue-500 animate-spin" />
+        <p className="text-gray-500 mt-3">Loading resume...</p>
+      </div>
+    );
+  }
+
+  if (!resumeData) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen text-center space-y-4">
+        <p className="text-gray-600 text-lg font-medium">Resume not found</p>
+        <a
+          href="/"
+          className="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition-all duration-200"
+        >
+          <ArrowLeftIcon className="size-4" />
+          Go to Home Page
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-slate-100 min-h-screen">
+      <div className="max-w-3xl mx-auto py-10">
+        <ResumePreview
+          data={resumeData}
+          template={resumeData.template}
+          accentColor={resumeData.accent_color}
+          classes="py-4 bg-white rounded-xl shadow-md"
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Preview;
