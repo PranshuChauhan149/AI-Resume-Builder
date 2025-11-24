@@ -23,6 +23,6 @@ const enhanceProfessionalSummary = async (req, res) => {
     const enhancedContent = response.choices[0].message.content;
     return res.status(200).json({ enhancedContent });
   } catch (error) {
-    return res.status(401).json({ message: error.message });
+    return res.status(401).json({ message: error.message })
   }
 };
