@@ -42,11 +42,11 @@ export const LoginUser = async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
+    const isMatch = await user.comparePassword(password);
 
-    if (!user.comparePassword(password)) {
+    if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-
     const token = generateToken(user._id);
     user.password = undefined;
     return res.status(200).json({ message: "Login  successflly", token, user });
@@ -68,13 +68,16 @@ export const getUserById = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
-
 export const getUserResume = async (req, res) => {
   try {
     const userId = req.userId;
-    const resume = await Resume.findById({ userId });
-    return res.status(200).json({ resume });
+
+    // Get all resumes for logged-in user
+    const resumes = await Resume.find({ userId }).sort({ updatedAt: -1 });
+
+    return res.status(200).json({ resumes });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
 };
+

@@ -1,13 +1,18 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { logout } from "../app/features/authSlice";
 
 const Navbar = () => {
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const LogoutUser = () => {
     navigate("/");
+    dispatch(logout());
   };
-  const user = { name: "John Doe" };
+
   return (
     <div className="shadow bg-white">
       <nav className="flex items-center justify-between max-w-7xl mx-auto px-4 py-3.5 text-slate-800 transition-all">

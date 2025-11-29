@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const Hero = () => {
+  const { user } = useSelector((state) => state.auth);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const logos = [
@@ -27,10 +29,7 @@ const Hero = () => {
             <a href="#features" className="hover:text-green-600 transition">
               Features
             </a>
-            <a
-              href="#testimonials"
-              className="hover:text-green-600 transition"
-            >
+            <a href="#testimonials" className="hover:text-green-600 transition">
               Testimonials
             </a>
             <a href="#cta" className="hover:text-green-600 transition">
@@ -40,16 +39,25 @@ const Hero = () => {
 
           <div className="flex gap-2">
             <Link
-             to={"/app?state=register"}
+              hidden={user}
+              to={"/app?state=register"}
               className="hidden md:block px-6 py-2 bg-green-500 hover:bg-green-700 active:scale-95 transition-all rounded-full text-white"
             >
               Get started
             </Link>
-            <Link to={"/app?state=login"}
-              
+            <Link
+              hidden={user}
+              to={"/app?state=login"}
               className="hidden md:block px-6 py-2 border active:scale-95 hover:bg-slate-50 transition-all rounded-full text-slate-700 hover:text-slate-900"
             >
               Login
+            </Link>
+            <Link
+              className="hidden md:block px-8 py-2 bg-green-500 hover:bg-green-700 active:scale-95 rounded-full transition-all text-white "
+              hidden={!user}
+              to={"/app"}
+            >
+              Dashboad
             </Link>
           </div>
 
@@ -160,7 +168,7 @@ const Hero = () => {
 
           {/* Headline + CTA */}
           <h1 className="text-5xl md:text-6xl font-semibold max-w-5xl text-center mt-4 md:leading-[70px]">
-            Land your dream Job with {" "}
+            Land your dream Job with{" "}
             <span className=" bg-gradient-to-r from-green-700 to-green-600 bg-clip-text text-transparent text-nowrap">
               AI-powered{" "}
             </span>{" "}
@@ -168,13 +176,14 @@ const Hero = () => {
           </h1>
 
           <p className="max-w-md text-center text-base my-7">
-           Create, edit and download professional resumes with AI-powered assistance.
+            Create, edit and download professional resumes with AI-powered
+            assistance.
           </p>
 
           {/* CTA Buttons */}
           <div className="flex items-center gap-4 ">
-            <Link to={"/app"}
-             
+            <Link
+              to={"/app"}
               className="bg-green-500 hover:bg-green-600 text-white rounded-full px-9 h-12 m-1 ring-offset-2 ring-1 ring-green-400 flex items-center transition-colors"
             >
               Get started

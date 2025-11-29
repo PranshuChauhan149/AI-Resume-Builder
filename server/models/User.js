@@ -9,10 +9,11 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-UserSchema.method.comparePassword = function (password) {
+  UserSchema.methods.comparePassword = function (password) {
   return bcrypt.compareSync(password, this.password);
 };
 
 const User = mongoose.model("User", UserSchema);
+
 
 export default User;
