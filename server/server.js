@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import userRouter from "./routes/userRouter.js";
 import resumeRouter from "./routes/resumeRoute.js";
+import aiRouter from "./routes/AiRoutes.js";
 
 const app = express();
 dotenv.config();
@@ -16,6 +17,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/users",userRouter);
 app.use("/api/resumes",resumeRouter);
+app.use("/api/ai",aiRouter);
 
 app.listen(PORT, () => {
   console.log(`server is running on this PORT : ${PORT}`);
