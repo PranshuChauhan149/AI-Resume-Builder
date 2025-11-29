@@ -25,8 +25,11 @@ import ExperienceForm from "../Components/ExperienceForm";
 import EducationForm from "../Components/EducationForm";
 import ProjectForm from "../Components/ProjectForm";
 import SkillsForm from "../Components/SkillsForm";
+import { useSelector } from "react-redux";
+import api from "../config/api";
 
 const ResumeBuilder = () => {
+  const { token } = useSelector((state) => state.auth);
   const { resumeId } = useParams();
   const [resumeData, setResumeData] = useState({
     _id: "",
@@ -43,10 +46,18 @@ const ResumeBuilder = () => {
   });
 
   const loadExistingResume = async () => {
-    const resume = dummyResumeData.find((resume) => resume._id === resumeId);
-    if (resume) {
-      setResumeData(resume);
-      document.title = resume.title;
+    try {
+      const { data } = await api.get("/api/resumes/get/" + resumeId, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (data.resume) {
+        setResumeData(data.resume);
+        document.title = data.resume.title;
+      }
+    } catch (error) {
+      console.log(error.message);
     }
   };
   const [activeSectionIndex, setActiveSectionsIndex] = useState(0);
@@ -226,13 +237,19 @@ const ResumeBuilder = () => {
             <div className="relative w-full">
               <div className="absolute bottom-3 left-0 right-0 flex items-center justify-end gap-3">
                 {resumeData.public && (
-                  <button onClick={handleShare} className="flex items-center gap-2 px-4 py-2 text-xs bg-gradient-to-br from-blue-100 to-blue-200 text-blue-600 rounded-lg ring-1 ring-blue-300 hover:ring-2 transition-all">
+                  <button
+                    onClick={handleShare}
+                    className="flex items-center gap-2 px-4 py-2 text-xs bg-gradient-to-br from-blue-100 to-blue-200 text-blue-600 rounded-lg ring-1 ring-blue-300 hover:ring-2 transition-all"
+                  >
                     <Share2Icon className="size-4" />
                     <span>Share</span>
                   </button>
                 )}
 
-                <button onClick={ChangeResumeVisibility} className="flex items-center gap-2 px-4 py-2 text-xs bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 rounded-lg ring-1 ring-gray-300 hover:ring-2 transition-all">
+                <button
+                  onClick={ChangeResumeVisibility}
+                  className="flex items-center gap-2 px-4 py-2 text-xs bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 rounded-lg ring-1 ring-gray-300 hover:ring-2 transition-all"
+                >
                   {resumeData.public ? (
                     <EyeIcon className="size-4" />
                   ) : (
@@ -241,7 +258,10 @@ const ResumeBuilder = () => {
                   <span>{resumeData.public ? "Public" : "Private"}</span>
                 </button>
 
-                <button onClick={DownloadResume} className="flex items-center gap-2 px-4 py-2 text-xs bg-gradient-to-br from-green-100 to-green-200 text-green-600 rounded-lg ring-1 ring-green-300 hover:ring-2 transition-all">
+                <button
+                  onClick={DownloadResume}
+                  className="flex items-center gap-2 px-4 py-2 text-xs bg-gradient-to-br from-green-100 to-green-200 text-green-600 rounded-lg ring-1 ring-green-300 hover:ring-2 transition-all"
+                >
                   <DownloadIcon className="size-4" />
                   <span>Download</span>
                 </button>

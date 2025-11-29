@@ -54,7 +54,11 @@ const Dashboard = () => {
       const { data } = await api.post(
         "/api/resumes/create",
         { title },
-        { headers: { Authorization: token } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       setAllResumes([...allResumes, data.resume]);
@@ -290,7 +294,10 @@ const Dashboard = () => {
                 onChange={(e) => setResume(e.target.files[0])}
               />
 
-              <button className="w-full py-2 bg-green-600 text-white rounded">
+              <button
+                disabled={isLoading}
+                className="w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors flex items-center justify-center gap-2 "
+              >
                 {isLoading && (
                   <LoaderCircleIcon className="animate-spin size-4 text-white" />
                 )}
