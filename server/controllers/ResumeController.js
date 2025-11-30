@@ -1,6 +1,6 @@
 import Resume from "../models/Resume.js";
 import fs from "fs";
-import imageKit from "../config/imageKit.js"; // ✔ missing import added
+import imageKit from "../config/ImageKit.js"; // ✔ missing import added
 
 export const createResume = async (req, res) => {
   try {
