@@ -3,6 +3,7 @@ import Resume from "../models/Resume.js";
 export const enhanceProfessionalSummary = async (req, res) => {
   try {
     const { userContent } = req.body;
+
     if (!userContent) {
       return res.status(400).json({ message: "missing content" });
     }

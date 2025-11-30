@@ -70,12 +70,19 @@ export const getPublicResumeById = async (req, res) => {
 export const updateResume = async (req, res) => {
   try {
     const userId = req.userId;
-    const { resumeId, resumeData, removeBackground } = req.body;
-    const image = req.file;
 
-    let resumeDataCopy = JSON.parse(JSON.stringify(resumeData));
+    // ------- FIX: resumeId + resumeData always come as strings -------
+    const resumeId = req.body.resumeId;
+    const removeBackground = req.body.removeBackground;
+    const resumeData = JSON.parse(req.body.resumeData); // FIXED
+
+    const image = req.file;
+    let resumeDataCopy = { ...resumeData };
+
+    // ------- FIX: handle image upload properly -------
     if (image) {
       const imageBufferData = fs.createReadStream(image.path);
+
       const response = await imageKit.files.upload({
         file: imageBufferData,
         fileName: "resume.png",
@@ -86,16 +93,28 @@ export const updateResume = async (req, res) => {
             (removeBackground ? ",e-bgremove" : ""),
         },
       });
+
+      if (!resumeDataCopy.personal_info) {
+        resumeDataCopy.personal_info = {};
+      }
       resumeDataCopy.personal_info.image = response.url;
     }
-    const resume = await Resume.findOneAndUpdate(
+
+    // ------- FIX: update the resume correctly -------
+    const updated = await Resume.findOneAndUpdate(
       { userId, _id: resumeId },
       resumeDataCopy,
-      {
-        new: true,
-      }
+      { new: true }
     );
-    return res.status(200).json({ message: "saved successfully" });
+
+    if (!updated) {
+      return res.status(404).json({ message: "Resume not found" });
+    }
+
+    return res.status(200).json({
+      message: "saved successfully",
+      resume: updated, // return updated resume (your frontend expects this)
+    });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }

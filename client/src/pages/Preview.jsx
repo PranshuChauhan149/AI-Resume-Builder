@@ -3,21 +3,24 @@ import { useParams } from "react-router-dom";
 import { dummyResumeData } from "../assets/assets";
 import { ArrowLeftIcon, Loader } from "lucide-react";
 import ResumePreview from "../Components/ResumePreview";
+import api from "../config/api";
 
 const Preview = () => {
   const { resumeId } = useParams();
   const [resumeData, setResumeData] = useState(null);
   const [isLoading, setLoading] = useState(true);
+  const loadResume = async () => {
+    try {
+      const { data } = await api.get("/api/resumes/public/" + resumeId);
+      setResumeData(data.resume);
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadResume = async () => {
-      setLoading(true);
-      // Simulate async data fetching (for demo, since dummy data is local)
-      const foundResume = dummyResumeData.find((resume) => resume._id === resumeId);
-      setResumeData(foundResume || null);
-      setLoading(false);
-    };
-
     loadResume();
   }, [resumeId]);
 
